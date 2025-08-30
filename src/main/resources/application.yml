@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: edge-server
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: flight-service-route
+              uri: ${FLIGHT_SERVICE_URL:http://localhost:8899}
+              predicates:
+                - Path=/api/v1/flights/**
+            - id: flight-booking-service-route
+              uri: ${FLIGHT_BOOKING_SERVICE_URL:http://localhost:7788}
+              predicates:
+                - Path=/api/v1/flight-bookings/**
+
+server:
+  netty:
+    idle-timeout: 15s
+    connection-timeout: 2s
+  shutdown: graceful
+  port: 6677
