@@ -60,7 +60,7 @@ tasks.named('bootBuildImage').configure {
 
     builder = "docker.io/paketobuildpacks/builder-jammy-base"
     version = project.findProperty("version")
-    imageName = "ghcr.io/vasimvahabov/flight-booking-service" + ":" + version
+    imageName = "ghcr.io/vasimvahabov/edge-server" + ":" + version
     publish = project.findProperty("publishImage")?.toBoolean() ?: false
     environment = [
             "BP_JVM_VERSION": JavaVersion.current().majorVersion
