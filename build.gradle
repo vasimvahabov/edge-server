@@ -32,6 +32,51 @@ dependencyManagement {
 	}
 }
 
+def checkPropertiesNotEmpty = { String task, def props ->
+    if (props.isEmpty()) {
+        throw new GradleException("task failed: No -P parameters passed...")
+    }
+}
+
+def checkProperty = { String task, String prop, def props ->
+    if(!props.containsKey(prop) || !project.property(prop).toString()) {
+        throw new GradleException("$task failed : $prop is not passed as a parameter...");
+    }
+}
+
+tasks.named('bootBuildImage').configure {
+    doFirst {
+        checkPropertiesNotEmpty(name, project.gradle.startParameter.projectProperties)
+
+        def props = project.gradle.startParameter.projectProperties
+        checkProperty(name, 'version', props)
+
+        if (project.findProperty("publishImage")?.toBoolean()) {
+            ['registryUsername', 'registryToken', 'registryUrl'].each { prop ->
+                checkProperty(name, prop, props)
+            }
+        }
+    }
+
+    builder = "docker.io/paketobuildpacks/builder-jammy-base"
+    version = project.findProperty("version")
+    imageName = "ghcr.io/vasimvahabov/flight-booking-service" + ":" + version
+    publish = project.findProperty("publishImage")?.toBoolean() ?: false
+    environment = [
+            "BP_JVM_VERSION": JavaVersion.current().majorVersion
+    ]
+    verboseLogging = true
+
+    docker {
+        publishRegistry {
+            username = project.findProperty("registryUsername")
+            password = project.findProperty("registryToken")
+            url = project.findProperty("registryUrl")
+        }
+    }
+
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
