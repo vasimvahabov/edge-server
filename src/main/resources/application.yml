@@ -23,6 +23,18 @@ spring:
               uri: ${FLIGHT_BOOKING_SERVICE_URL:http://localhost:7788}
               predicates:
                 - Path=/api/v1/flight-bookings/**
+          default-filters:
+            - name: Retry
+              args:
+                retries: 3
+                methods: GET
+                series: SERVER_ERROR
+                exceptions: java.io.IOException, java.util.concurrent.TimeoutException
+                backoff:
+                  firstBackoff: 50ms
+                  maxBackoff: 500ms
+                  factor: 2
+                  basedOnPreviousValue: false
 
 server:
   netty:
