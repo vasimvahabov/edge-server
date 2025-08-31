@@ -1,3 +1,6 @@
 ### find all flights
 GET localhost:6677/api/v1/flights
 
+### find all flight bookings
+GET localhost:6677/api/v1/flight-bookings
+
