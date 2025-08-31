@@ -7,6 +7,13 @@ spring:
     gateway:
       server:
         webflux:
+          httpclient:
+            connect-timeout: 2000
+            response-timeout: 5s
+            pool:
+              type: elastic
+              max-idle-time: 15s
+              max-life-time: 60s
           routes:
             - id: flight-service-route
               uri: ${FLIGHT_SERVICE_URL:http://localhost:8899}
