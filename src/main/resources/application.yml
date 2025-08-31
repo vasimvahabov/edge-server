@@ -3,6 +3,12 @@ spring:
     name: edge-server
   lifecycle:
     timeout-per-shutdown-phase: 15s
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      connect-timeout: 2s
+      timeout: 1s
   cloud:
     gateway:
       server:
@@ -32,18 +38,6 @@ spring:
                 - name: CircuitBreaker
                   args:
                     name: flightBookingServiceCircuitBreaker
-          default-filters:
-            - name: Retry
-              args:
-                retries: 3
-                methods: GET
-                series: SERVER_ERROR
-                exceptions: java.io.IOException, java.util.concurrent.TimeoutException
-                backoff:
-                  firstBackoff: 50ms
-                  maxBackoff: 500ms
-                  factor: 2
-                  basedOnPreviousValue: false
 
 server:
   netty:
