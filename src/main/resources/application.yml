@@ -19,10 +19,19 @@ spring:
               uri: ${FLIGHT_SERVICE_URL:http://localhost:8899}
               predicates:
                 - Path=/api/v1/flights/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: flightServiceCircuitBreaker
+                    fallbackUri: forward:/flight-service-fallback
             - id: flight-booking-service-route
               uri: ${FLIGHT_BOOKING_SERVICE_URL:http://localhost:7788}
               predicates:
                 - Path=/api/v1/flight-bookings/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: flightBookingServiceCircuitBreaker
           default-filters:
             - name: Retry
               args:
@@ -42,3 +51,20 @@ server:
     connection-timeout: 2s
   shutdown: graceful
   port: 6677
+
+logging:
+  level:
+    io.github.resilience4j: DEBUG
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 20
+        permitted-number-of-calls-in-half-open-state: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 15000
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 5s
