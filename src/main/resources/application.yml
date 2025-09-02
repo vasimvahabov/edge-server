@@ -9,11 +9,17 @@ spring:
       port: 6379
       connect-timeout: 2s
       timeout: 1s
+  session:
+#    store-type: redis
+    timeout: 10m
+    redis:
+      namespace: travelbookingsystem:edgeserver
   cloud:
     gateway:
       server:
         webflux:
           default-filters:
+            - name: SaveSession
             - name: Retry
               args:
                 retries: 3
