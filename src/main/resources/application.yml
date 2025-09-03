@@ -19,7 +19,7 @@ spring:
       server:
         webflux:
           default-filters:
-            - name: SaveSession
+#            - name: SaveSession
             - name: Retry
               args:
                 retries: 3
