@@ -1,0 +1,58 @@
+### create a flight
+POST localhost:6677/api/v1/flights
+Content-Type: application/json
+
+{
+
+  "airplaneId" : 1,
+
+  "number" : "AA144",
+
+  "departureAirportCode" : "DUB",
+
+  "arrivalAirportCode" : "FRA",
+
+  "departureDateTime" : "2025-07-15 00:12",
+
+  "arrivalDateTime" : "2025-07-15 05:00",
+
+  "price" : 15.99
+
+}
+
+### find all flights
+GET localhost:6677/api/v1/flights
+
+### find flight by number
+GET localhost:6677/api/v1/flights/AA144
+
+### update flight
+PUT localhost:6677/api/v1/flights
+Content-Type: application/json
+
+{
+
+  "airplaneId" : 2,
+
+  "number" : "AA133",
+
+  "departureAirportCode" : "FRA",
+
+  "arrivalAirportCode" : "DUB",
+
+  "departureDateTime" : "2025-07-15 00:44",
+
+  "arrivalDateTime" : "2025-07-15 05:44",
+
+  "price" : 10.99
+
+}
+
+### delete flight by number
+DELETE localhost:6677/api/v1/flights/AA133
+
+### request app info
+GET localhost:6677/api/v1/app/info
+
+### post request actuater refresh
+POST localhost:6677/actuator/refresh
