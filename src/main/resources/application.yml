@@ -46,19 +46,25 @@ spring:
               max-life-time: 60s
           routes:
             - id: flight-service-route
-              uri: ${FLIGHT_SERVICE_URL:http://localhost:8899}
+              uri: ${FLIGHT_SERVICE_URI:http://localhost:8899}
               predicates:
-                - Path=/api/v1/flights/**
+                - Path=/flight-service/**
               filters:
+                - name: StripPrefix
+                  args:
+                    parts: 1
                 - name: CircuitBreaker
                   args:
                     name: flightServiceCircuitBreaker
                     fallbackUri: forward:/flight-service-fallback
             - id: flight-booking-service-route
-              uri: ${FLIGHT_BOOKING_SERVICE_URL:http://localhost:7788}
+              uri: ${FLIGHT_BOOKING_SERVICE_URI:http://localhost:7788}
               predicates:
-                - Path=/api/v1/flight-bookings/**
+                - Path=/flight-booking-service/**
               filters:
+                - name: StripPrefix
+                  args:
+                    parts: 1
                 - name: CircuitBreaker
                   args:
                     name: flightBookingServiceCircuitBreaker
