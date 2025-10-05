@@ -14,6 +14,17 @@ spring:
     timeout: 10m
     redis:
       namespace: travelbookingsystem:edgeserver
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: ${spring.application.name}
+            client-secret: Q9Py2cdbDzwhXGeM9qXvSQShP47WUgRt
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:4455/realms/travel-booking-system
   cloud:
     gateway:
       server:
