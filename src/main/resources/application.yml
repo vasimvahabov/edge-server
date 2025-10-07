@@ -64,6 +64,10 @@ spring:
                 - name: StripPrefix
                   args:
                     parts: 1
+                - name: RewritePath
+                  args:
+                    regexp: '/(?<remaining>.*)'
+                    replacement: '/api/v1/${remaining}'
                 - name: CircuitBreaker
                   args:
                     name: flightServiceCircuitBreaker
@@ -76,6 +80,10 @@ spring:
                 - name: StripPrefix
                   args:
                     parts: 1
+                - name: RewritePath
+                  args:
+                    regexp: '/(?<remaining>.*)'
+                    replacement: '/api/v1/${remaining}'
                 - name: CircuitBreaker
                   args:
                     name: flightBookingServiceCircuitBreaker

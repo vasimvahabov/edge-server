@@ -1,5 +1,5 @@
 ### create a flight
-POST localhost:6677/flight-service/api/v1/flights
+POST localhost:6677/flight-service/flights
 Content-Type: application/json
 
 {
@@ -21,13 +21,13 @@ Content-Type: application/json
 }
 
 ### find all flights
-GET localhost:6677/api/v1/flights
+GET localhost:6677/flight-service/flights
 
 ### find flight by number
-GET localhost:6677/flight-service/api/v1/flights/AA144
+GET localhost:6677/flight-service/flights/AA144
 
 ### update flight
-PUT localhost:6677/flight-service/api/v1/flights
+PUT localhost:6677/flight-service/flights
 Content-Type: application/json
 
 {
@@ -49,10 +49,10 @@ Content-Type: application/json
 }
 
 ### delete flight by number
-DELETE localhost:6677/flight-service/api/v1/flights/AA133
+DELETE localhost:6677/flight-service/flights/AA133
 
 ### request app info
-GET localhost:6677/flight-service/api/v1/app/info
+GET localhost:6677/flight-service/app/info
 
 ### post request actuater refresh
 POST localhost:6677/flight-service/actuator/refresh
