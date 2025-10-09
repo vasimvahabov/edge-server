@@ -3,13 +3,18 @@ package com.travelbookingsystem.edgeserver.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
+import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
+import org.springframework.security.web.server.csrf.ServerCsrfTokenRequestAttributeHandler;
 
 @Slf4j
 @Configuration
@@ -22,8 +27,19 @@ public class SecurityConfig {
             ReactiveClientRegistrationRepository clientRegistrationRepository
     ) {
         return http
-                .authorizeExchange(exchange ->
-                        exchange.anyExchange().authenticated())
+                .csrf(csrf ->
+                        csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
+                                .csrfTokenRequestHandler(new ServerCsrfTokenRequestAttributeHandler())
+                )
+                .authorizeExchange(exchange -> exchange
+                        .pathMatchers("/", "/*.css", "/*.js", "/favicon.ico")
+                        .permitAll()
+                        .pathMatchers(HttpMethod.GET, "/flight-service/flights").permitAll()
+                        .anyExchange().authenticated())
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.authenticationEntryPoint(
+                                new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)
+                        ))
                 .oauth2Login(Customizer.withDefaults())
                 .logout(logout -> logout.logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository)))
                 .build();
@@ -35,4 +51,24 @@ public class SecurityConfig {
         return oidcLogoutSuccessHandler;
     }
 
+//    @Bean
+//    UrlBasedCorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//        corsConfiguration.setAllowedOrigins(List.of(
+//                "http:localhost:4455",
+//                "http:localhost:6677",
+//                "http:localhost:9004"
+//        ));
+//        corsConfiguration.setAllowedMethods(List.of(
+//                HttpMethod.GET.name(),
+//                HttpMethod.POST.name(),
+//                HttpMethod.DELETE.name(),
+//                HttpMethod.PUT.name()
+//        ));
+//        corsConfiguration.setAllowedHeaders(List.of("*"));
+//        corsConfiguration.setAllowCredentials(true);
+//        var source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", corsConfiguration);
+//        return source;
+//    }
 }
