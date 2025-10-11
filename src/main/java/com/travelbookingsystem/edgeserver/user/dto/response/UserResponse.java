@@ -2,8 +2,8 @@ package com.travelbookingsystem.edgeserver.user.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -20,5 +20,16 @@ public class UserResponse {
     String lastName;
 
     List<String> roles;
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof UserResponse that)) return false;
+        return Objects.equals(username, that.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(username);
+    }
 
 }
