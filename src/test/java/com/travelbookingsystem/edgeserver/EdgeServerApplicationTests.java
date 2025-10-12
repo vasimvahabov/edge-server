@@ -30,6 +30,7 @@ class EdgeServerApplicationTests {
     static GenericContainer<?> redisContainer =
             new GenericContainer<>(DockerImageName.parse("redis:8.2.1"))
                     .withExposedPorts(REDIS_PORT);
+
     @Container
     static GenericContainer<?> keycloakContainer = new GenericContainer<>(DockerImageName.parse("quay.io/keycloak/keycloak:26.3"))
             .withEnv("KC_BOOTSTRAP_ADMIN_USERNAME", "admin")
@@ -42,10 +43,10 @@ class EdgeServerApplicationTests {
 
     @DynamicPropertySource
     static void redisProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.redis.host", ()-> redisContainer.getHost());
-        registry.add("spring.data.redis.port", ()-> redisContainer.getMappedPort(REDIS_PORT));
+        registry.add("spring.data.redis.host", () -> redisContainer.getHost());
+        registry.add("spring.data.redis.port", () -> redisContainer.getMappedPort(REDIS_PORT));
 
-        var issuerUri = "http://" + keycloakContainer.getHost() + ":" + keycloakContainer.getMappedPort(KEYCLOAK_PORT)+ "/realms/travel-booking-system";
+        var issuerUri = "http://" + keycloakContainer.getHost() + ":" + keycloakContainer.getMappedPort(KEYCLOAK_PORT) + "/realms/travel-booking-system";
         registry.add("spring.security.oauth2.client.provider.keycloak.issuer-uri",
                 () -> issuerUri);
     }

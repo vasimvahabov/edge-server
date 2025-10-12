@@ -1,3 +1,16 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: ${spring.application.name}
+            client-secret: ewkA2aaLuRPmAny3igYgrY5O800MwcXI
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: ${OAUTH2_ISSUER_URI:http://localhost:4455/realms/travel-booking-system}
+
 #logging:
 #  level:
 #    org.springframework.security: DEBUG
