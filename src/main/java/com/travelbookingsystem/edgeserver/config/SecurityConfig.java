@@ -14,7 +14,12 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
+import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.security.web.server.csrf.ServerCsrfTokenRequestAttributeHandler;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Configuration
@@ -27,6 +32,7 @@ public class SecurityConfig {
             ReactiveClientRegistrationRepository clientRegistrationRepository
     ) {
         return http
+                .cors(Customizer.withDefaults())
                 .csrf(csrf ->
                         csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
                                 .csrfTokenRequestHandler(new ServerCsrfTokenRequestAttributeHandler())
@@ -51,24 +57,33 @@ public class SecurityConfig {
         return oidcLogoutSuccessHandler;
     }
 
-//    @Bean
-//    UrlBasedCorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.setAllowedOrigins(List.of(
-//                "http:localhost:4455",
-//                "http:localhost:6677",
-//                "http:localhost:9004"
-//        ));
-//        corsConfiguration.setAllowedMethods(List.of(
-//                HttpMethod.GET.name(),
-//                HttpMethod.POST.name(),
-//                HttpMethod.DELETE.name(),
-//                HttpMethod.PUT.name()
-//        ));
-//        corsConfiguration.setAllowedHeaders(List.of("*"));
-//        corsConfiguration.setAllowCredentials(true);
-//        var source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", corsConfiguration);
-//        return source;
-//    }
+    @Bean
+    WebFilter csrfTokenWebFilter() {
+        return (ServerWebExchange exchange, WebFilterChain chain) ->
+                exchange.<Mono<CsrfToken>>getAttributeOrDefault(CsrfToken.class.getName(), Mono.empty())
+                        .doOnNext(token -> log.debug("CSRF Token generated: {}", token.getToken()))
+                        .then(chain.filter(exchange));
+    }
+
+    /*@Bean
+    UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(List.of(
+                "http:localhost:4455",
+                "http:localhost:6677",
+                "http:localhost:9004"
+        ));
+        corsConfiguration.setAllowedMethods(List.of(
+                HttpMethod.GET.name(),
+                HttpMethod.POST.name(),
+                HttpMethod.DELETE.name(),
+                HttpMethod.PUT.name()
+        ));
+        corsConfiguration.setAllowedHeaders(List.of("*"));
+        corsConfiguration.setAllowCredentials(true);
+        var source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
+    }*/
+
 }
