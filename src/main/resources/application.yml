@@ -87,6 +87,10 @@ spring:
                 - name: CircuitBreaker
                   args:
                     name: flightBookingServiceCircuitBreaker
+            - id: spa-route
+              uri: ${SPA_URL:http://localhost:4200}
+              predicates:
+                - Path=/,/*.css,/*.js,/favicon.ico
 
 server:
   netty:
