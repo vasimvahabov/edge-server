@@ -48,7 +48,7 @@ public class UserControllerTests {
                 .username("username-edge-server")
                 .firstName("first-name-edge-server")
                 .lastName("last-name-edge-server")
-                .roles(List.of("Employee", "Customer"))
+                .roles(List.of("employee", "customer"))
                 .build();
 
         Mockito.when(userMapper.oidcUserToResponse(any())).thenReturn(user);
@@ -60,7 +60,10 @@ public class UserControllerTests {
                 .exchange()
                 .expectStatus().is2xxSuccessful()
                 .expectBody(UserResponse.class)
-                .value(payload -> Assertions.assertThat(payload).isEqualTo(user));
+                .value(payload -> {
+                    Assertions.assertThat(payload).isEqualTo(user);
+                    Assertions.assertThat(payload.getRoles()).containsAll(user.getRoles());
+                });
     }
 
     private SecurityMockServerConfigurers.OidcLoginMutator configureMockOidcLogin(UserResponse user) {
@@ -69,6 +72,7 @@ public class UserControllerTests {
                     builder.claim(StandardClaimNames.PREFERRED_USERNAME, user.getUsername());
                     builder.claim(StandardClaimNames.GIVEN_NAME, user.getFirstName());
                     builder.claim(StandardClaimNames.FAMILY_NAME, user.getLastName());
+                    builder.claim("roles", user.getRoles());
                 }
         );
     }
