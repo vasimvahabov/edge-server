@@ -20,7 +20,7 @@ spring:
         registration:
           keycloak:
             client-id: ${spring.application.name}
-            client-secret: ewkA2aaLuRPmAny3igYgrY5O800MwcXI
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:"ewkA2aaLuRPmAny3igYgrY5O800MwcXI"}
             scope: openid, roles
         provider:
           keycloak:
