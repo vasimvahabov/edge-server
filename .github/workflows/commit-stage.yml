@@ -32,7 +32,7 @@ jobs:
       - name: Build, unit tests and integration tests
         run: |
           chmod +x gradlew
-          ./gradlew build
+          ./gradlew setupKeycloakTestResources build
   package:
     name: Package and Publish
     runs-on: ubuntu-22.04
